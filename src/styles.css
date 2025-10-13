@@ -1,151 +1,293 @@
-:root{
-    --bg:#0b0c10; --ink:#e5e7eb; --muted:#9aa0a6;
-    --coverA:#0e1119; --coverB:#1a2130; --coverEdge:#222a39;
-    --paper:#f7f6f2; --paperEdge:#d7d2c7; --paperInk:#23262b;
-    --accent:#7dd3fc;
-    --thickness:3px;          /* perceived thickness of a leaf */
-    --duration:780ms;         /* turn time */
-    --t:0;                    /* 0..1 progress for shadows */
+:root {
+    --cover-main: #7b4a24;
+    --cover-dark: #4c2a12;
+    --cover-highlight: #a66a3a;
+    --cover-seam: #3b1f0d;
+    --cover-edge: #2d1808;
+    --page: #f8f0d8;
+    --page-edge: #e1cda6;
+    --page-ink: #3d2816;
+    --shadow-strong: rgba(0, 0, 0, 0.35);
+    --shadow-soft: rgba(0, 0, 0, 0.18);
+    --accent: #c99a63;
+    --thickness: 2px;
+    --duration: 820ms;
+    --t: 0;
 }
 
-*{box-sizing:border-box}
-html,body,#root{height:100%}
-body{margin:0;background:radial-gradient(120% 120% at 100% 0%, rgba(255,255,255,.04), transparent 60%),var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial,sans-serif}
-.app{min-height:100dvh;display:flex;flex-direction:column}
-.topbar{height:56px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid #141821;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent)}
-.stage{flex:1;display:grid;place-items:center;padding:clamp(12px,4vw,36px)}
-
-.book3d-wrap{width:100%;display:grid;place-items:center}
-.book3d{
-    position:relative;
-    perspective:2200px;               /* deep perspective */
-    perspective-origin:50% 50%;
-    filter:drop-shadow(0 28px 36px rgba(0,0,0,.45));
+html, body, #root {
+    height: 100%;
 }
 
-/* Covers */
-.cover{
-    position:absolute;top:0;
-    background:linear-gradient(145deg,var(--coverA),var(--coverB));
-    border:1px solid var(--coverEdge);
-    border-radius:12px;
-    transform-style:preserve-3d;
+.app-shell {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(32px, 6vw, 72px);
+    background: #ffffff;
 }
-.cover-left{left:0;border-right:none;border-top-right-radius:0;border-bottom-right-radius:0}
-.cover-right{right:0;border-left:none;border-top-left-radius:0;border-bottom-left-radius:0}
-.cover-surface{position:absolute;inset:0}
-.cover-surface.left{
+
+.app-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 1080px);
+}
+
+.book3d-wrap {
+    width: 100%;
+    display: grid;
+    place-items: center;
+    touch-action: pan-y;
+}
+
+.book3d {
+    position: relative;
+    perspective: 2400px;
+    perspective-origin: 50% 50%;
+    filter: drop-shadow(0 28px 46px rgba(0, 0, 0, 0.28));
+}
+
+.cover {
+    position: absolute;
+    top: 0;
+    border-radius: 14px;
+    border: 1px solid var(--cover-edge);
     background:
-            radial-gradient(140% 140% at 100% 0%, rgba(255,255,255,.06), transparent 60%),
-            linear-gradient(180deg, rgba(255,255,255,.03), transparent 30%);
+        linear-gradient(160deg, rgba(255, 255, 255, 0.18), transparent 45%),
+        linear-gradient(120deg, var(--cover-highlight), var(--cover-main) 45%, var(--cover-dark) 110%);
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.35);
+    transform-style: preserve-3d;
 }
-.cover-surface.right{
+
+.cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+}
+
+.cover-left {
+    left: 0;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.cover-right {
+    right: 0;
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.cover-surface {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
+.cover-surface.left {
     background:
-            radial-gradient(140% 140% at 0% 0%, rgba(255,255,255,.06), transparent 60%),
-            linear-gradient(180deg, rgba(255,255,255,.03), transparent 30%);
-}
-.brand{position:absolute;left:18px;bottom:18px;font-size:14px;color:#cbd2da;letter-spacing:.35px}
-
-/* Spine (visual center) */
-.spine{
-    position:absolute;left:50%;top:0;transform:translateX(-50%);
-    width:18px;border-left:1px solid #10141d;border-right:1px solid #252d3c;
-    background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(255,255,255,.08),rgba(0,0,0,.35));
-    box-shadow:inset 0 0 14px rgba(0,0,0,.45);
-    border-radius:6px;
+        linear-gradient(180deg, rgba(0, 0, 0, 0.2), transparent 35%),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.16), transparent 60%);
 }
 
-/* Leaves container sits above covers */
-.leaves{position:absolute;left:0;top:0;pointer-events:none}
+.cover-surface.right {
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.22), transparent 35%),
+        linear-gradient(270deg, rgba(255, 255, 255, 0.14), transparent 60%);
+}
 
-/* A single leaf (right side). Hinges exactly at the spine. */
-.leaf3d{
-    position:absolute;top:0;right:50%; /* anchor at spine */
-    width:50%;height:100%;
-    transform-origin:left center;       /* hinge */
-    transform-style:preserve-3d;
-    pointer-events:auto;
+.spine {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 24px;
+    border-radius: 12px;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(0, 0, 0, 0.28);
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.55), rgba(255, 255, 255, 0.25) 45%, rgba(0, 0, 0, 0.5));
+    box-shadow:
+        inset 0 0 20px rgba(0, 0, 0, 0.55),
+        0 0 18px rgba(0, 0, 0, 0.2);
+}
+
+.leaves {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+
+.leaf3d {
+    position: absolute;
+    top: 0;
+    right: 50%;
+    width: 50%;
+    height: 100%;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    pointer-events: auto;
     transition:
-            transform var(--duration) cubic-bezier(.22,.61,.36,1),
-            box-shadow var(--duration) ease;
-    /* subtle depth when resting */
-    box-shadow: 0 0 0 rgba(0,0,0,0);
+        transform var(--duration) cubic-bezier(0.24, 0.7, 0.3, 1),
+        box-shadow var(--duration) ease,
+        filter var(--duration) ease;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    filter: brightness(1);
 }
 
-/* turned = moves to the left pile */
-.leaf3d.is-turned{
-    transform:translateX(100%) rotateY(-180deg);
-    box-shadow: 0 6px 18px rgba(0,0,0,.25);
+.leaf3d.is-turned {
+    transform: translateX(100%) rotateY(-180deg);
+    box-shadow: 0 18px 28px var(--shadow-soft);
+    filter: brightness(0.98);
 }
 
-/* Two faces per leaf */
-.page3d{
-    position:absolute;inset:0;
-    background:var(--paper);color:var(--paperInk);
-    border-left:1px solid var(--paperEdge);
-    border-right:1px solid var(--paperEdge);
-    backface-visibility:hidden;
-    overflow:hidden;
+.page3d {
+    position: absolute;
+    inset: 0;
+    background: var(--page);
+    color: var(--page-ink);
+    border-left: 1px solid var(--page-edge);
+    border-right: 1px solid var(--page-edge);
+    backface-visibility: hidden;
+    overflow: hidden;
 }
-/* right visible face before turn */
-.page3d.front{}
-/* left visible after turn */
-.page3d.back{transform:rotateY(180deg)}
 
-/* Paper surface */
-.face{position:absolute;inset:0;padding:28px 30px;background:
-        radial-gradient(140% 140% at 0% 0%, rgba(0,0,0,.035), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.02), transparent 25%)}
-.face.blank{
+.page3d.back {
+    transform: rotateY(180deg);
+}
+
+.face {
+    position: absolute;
+    inset: 0;
     background:
-            repeating-linear-gradient(transparent 0 28px, rgba(3,169,244,.10) 28px 29px),
-            radial-gradient(140% 140% at 0% 0%, rgba(0,0,0,.028), transparent 60%),
-            linear-gradient(180deg, rgba(0,0,0,.02), transparent 25%),
-            var(--paper);
-}
-.ruler{height:1px;background:rgba(3,169,244,.22);margin-top:12px}
-.ruler.faint{background:rgba(3,169,244,.14)}
-
-/* Edge highlights add perceived thickness */
-.edge{
-    position:absolute;top:0;bottom:0;width:var(--thickness);pointer-events:none
-}
-.edge-right{right:-1px;background:linear-gradient(90deg, rgba(0,0,0,.2), rgba(255,255,255,.55))}
-.edge-left{left:-1px;background:linear-gradient(90deg, rgba(255,255,255,.55), rgba(0,0,0,.2))}
-
-/* Dynamic shades tied to --t (0 idle → 1 mid-turn) */
-.shade{
-    position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;
-    opacity: calc(.08 + .42 * var(--t));
-}
-.shade-front{
-    background:linear-gradient(90deg, rgba(0,0,0,.45), rgba(0,0,0,0) 35%);
-}
-.shade-back{
-    background:linear-gradient(270deg, rgba(0,0,0,.45), rgba(0,0,0,0) 35%);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent 40%),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.25), transparent 60%),
+        var(--page);
 }
 
-/* Page curl highlight near the turning edge */
-.curl{
-    position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(120% 120% at 100% 50%, rgba(255,255,255,.55), rgba(255,255,255,0) 50%);
-    opacity: calc(.0 + .5 * var(--t));
+.face.blank::after {
+    content: '';
+    position: absolute;
+    inset: 18px;
+    border-radius: 4px;
+    border: 1px solid rgba(233, 204, 150, 0.3);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.edge {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--thickness);
+    pointer-events: none;
+}
+
+.edge-right {
+    right: -1px;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.8));
+}
+
+.edge-left {
+    left: -1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.78), rgba(0, 0, 0, 0.12));
+}
+
+.shade {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    opacity: calc(0.12 + 0.38 * var(--t));
+}
+
+.shade-front {
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0) 38%);
+}
+
+.shade-back {
+    background: linear-gradient(270deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 35%);
+}
+
+.curl {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(120% 120% at 100% 50%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 52%);
+    opacity: calc(0.05 + 0.45 * var(--t));
     transform: translateZ(1px);
 }
-.curl-back{
-    background:radial-gradient(120% 120% at 0% 50%, rgba(255,255,255,.55), rgba(255,255,255,0) 50%);
+
+.curl-back {
+    background: radial-gradient(120% 120% at 0% 50%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 52%);
 }
 
-/* Controls */
-.book-nav{
-    position:absolute;top:50%;transform:translateY(-50%);
-    height:48px;width:48px;border-radius:999px;border:1px solid #1a1f2a;
-    background:rgba(18,20,28,.75);color:var(--ink);font-size:28px;
-    display:grid;place-items:center;cursor:pointer;user-select:none;
-    transition:transform .15s ease, background .2s ease, opacity .2s ease;
-    backdrop-filter:blur(6px)
+.book-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 56px;
+    width: 56px;
+    border-radius: 50%;
+    border: 1px solid rgba(91, 58, 30, 0.45);
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--cover-dark);
+    font-size: 28px;
+    font-weight: 600;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    backdrop-filter: blur(6px);
 }
-.book-nav:hover{transform:translateY(-50%) scale(1.06);background:rgba(25,28,38,.9)}
-.book-nav:disabled{opacity:.35;cursor:not-allowed}
-.nav-left{left:-56px} .nav-right{right:-56px}
-@media (max-width:1120px){.nav-left{left:-8px}.nav-right{right:-8px}}
+
+.book-nav:hover {
+    transform: translateY(-50%) scale(1.05);
+    background: rgba(255, 245, 228, 0.92);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.book-nav:active {
+    transform: translateY(-50%) scale(0.98);
+}
+
+.book-nav:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.nav-left {
+    left: -68px;
+}
+
+.nav-right {
+    right: -68px;
+}
+
+@media (max-width: 1120px) {
+    .nav-left {
+        left: -12px;
+    }
+    .nav-right {
+        right: -12px;
+    }
+}
+
+@media (max-width: 860px) {
+    .app-shell {
+        padding: 24px;
+    }
+    .book-nav {
+        height: 48px;
+        width: 48px;
+        font-size: 24px;
+    }
+}

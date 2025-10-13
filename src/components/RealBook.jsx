@@ -47,9 +47,7 @@ export default function RealBook({ pages, width=980, height=640 }) {
             <div className="book3d" style={{ width: W, height: H }}>
                 {/* left hard cover */}
                 <div className="cover cover-left" style={{ width: HALF, height: H }}>
-                    <div className="cover-surface left">
-                        <span className="brand">Scrapbook</span>
-                    </div>
+                    <div className="cover-surface left" />
                 </div>
 
                 {/* right hard cover */}
@@ -105,7 +103,7 @@ function Leaf({ zIndex, width, height, turned, front, back }) {
         >
             {/* Right page (front face) */}
             <div className="page3d front">
-                <PaperFace page={front} side="front" />
+                <PaperFace page={front} />
                 <div className="edge edge-right" />
                 <div className="shade shade-front" />
                 <div className="curl curl-front" />
@@ -113,7 +111,7 @@ function Leaf({ zIndex, width, height, turned, front, back }) {
 
             {/* Left page (back face after flip) */}
             <div className="page3d back">
-                <PaperFace page={back} side="back" />
+                <PaperFace page={back} />
                 <div className="edge edge-left" />
                 <div className="shade shade-back" />
                 <div className="curl curl-back" />
@@ -122,13 +120,10 @@ function Leaf({ zIndex, width, height, turned, front, back }) {
     )
 }
 
-function PaperFace({ page, side }) {
+function PaperFace({ page }) {
     if (!page || page.type === 'blank') {
         return (
-            <div className="face blank">
-                <div className="ruler" />
-                <div className="ruler faint" />
-            </div>
+            <div className="face blank" />
         )
     }
     // extend later for images/text
