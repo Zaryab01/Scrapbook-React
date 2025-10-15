@@ -122,7 +122,8 @@ html, body, #root {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     transform-origin: left center;
-    z-index: 3000;
+    z-index: 3200;
+    transform: rotateY(0deg);
 }
 
 .cover-surface {
@@ -148,7 +149,9 @@ html, body, #root {
 }
 
 .book3d.is-open .cover-right {
-    transform: rotateY(0deg);
+    transform: rotateY(-178deg) translateZ(2px);
+    z-index: 600;
+    pointer-events: none;
 }
 
 .spine {
@@ -198,6 +201,7 @@ html, body, #root {
         filter var(--duration) ease;
     box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     filter: brightness(1);
+    transform: translateX(100%);
 }
 
 .leaf3d.is-turned {
